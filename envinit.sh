@@ -1,4 +1,4 @@
 #!/bin/sh
 
-yum install vim less gdb net-tools git lrzsz wget;
+yum install telnet vim less gdb net-tools git lrzsz wget;
 
