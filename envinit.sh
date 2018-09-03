@@ -1,4 +1,4 @@
 #!/bin/sh
 
-yum install vim less gdb net-tools git;
+yum install vim less gdb net-tools git lrzsz;
 
