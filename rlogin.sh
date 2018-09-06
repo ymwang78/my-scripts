@@ -1,4 +1,4 @@
 #!/bin/sh
 
-ssh -i ~/.ssh/id_rsa $1
+ssh -i ~/.ssh/$1 $1
 
