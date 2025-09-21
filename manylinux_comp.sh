@@ -15,8 +15,7 @@ cd ..
 wget https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.39/util-linux-2.39.4.tar.gz
 tar xf util-linux-2.39.4.tar.gz
 cd util-linux-2.39.4
-
-./configure --disable-all-programs --enable-libuuid --enable-static --disable-shared --prefix=/usr/local
+./configure --disable-all-programs --enable-libuuid --prefix=/usr/local --enable-static --disable-shared --enable-shared=no CFLAGS="-fPIC"
 make -j$(nproc)
 make install
 cd ..
@@ -32,7 +31,7 @@ make -j$(nproc)
 make install
 cd ../..
 
-# build mbedtls
+# build mbedtls, 暂时不需要，都用openssl了
 wget https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.6.4.tar.gz
 tar xf v3.6.4.tar.gz
 cd mbedtls-3.6.4
@@ -60,14 +59,27 @@ wget https://dist.libuv.org/dist/v1.48.0/libuv-v1.51.0.tar.gz
 tar xf libuv-v1.51.0.tar.gz
 cd libuv-v1.51.0
 rm -rf build && mkdir build && cd build
-cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DBUILD_TESTING=OFF ..
+cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+  -DUA_ENABLE_ENCRYPTION=ON \
+  -DUA_ENABLE_ENCRYPTION_OPENSSL=ON \
+  -DUA_ENABLE_ENCRYPTION_MBEDTLS=OFF \
+  -DOPENSSL_USE_STATIC_LIBS=TRUE \
+  -DOPENSSL_ROOT_DIR=/usr/local/openssl \
+  ..
 make -j$(nproc)
 make install
 cd ../..
 
+# build open62541
+git clone https://github.com/open62541/open62541.git
+cd open62541
+mkdir build && cd build
+rm -rf build && cmake -DBUILD_SHARED_LIBS=OFF -DUA_NAMESPACE_ZERO=FULL -DCMAKE_POSITION_INDEPENDENT_CODE=ON ..
+make -j$(nproc)
+make install
+cd ../..
 
 cd cxxproj
-
 
 cd libsrc/libzce
 rm -rf build && mkdir build && cd build
